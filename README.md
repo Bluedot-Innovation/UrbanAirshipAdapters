@@ -106,6 +106,7 @@ In the first draft, this documentation only represent how to archive a light tou
 	```objc
 	#import <AirshipKit/AirshipKit.h>
 	```
+
 2. Take off Urban Airship Services from `application:didFinishLaunchingWithOptions:` method in your `AppDelegate`
 	```objc
   // Call takeOff (which creates the UAirship singleton)
@@ -124,6 +125,7 @@ In the first draft, this documentation only represent how to archive a light tou
 	```objc
 	#import <BDPointSDK.h>
 	```
+
 2. Introducing `BDLocationManager` which is the entry-point for an app to start using Point SDK
 	```objc
   [BDLocationManager instance];
@@ -155,6 +157,7 @@ In the first draft, this documentation only represent how to archive a light tou
 	                                              username: username
 	                                           endpointURL: endpointURL];
 	```
+
 3. `BDLocationManager` expose properties for two delegates with additional features
   - `sessionDelegate` implements `BDPSessionDelegate` protocol
     - `BDPSessionDelegate` protocol provides callbacks informing the application when authentication state changes. The rules defined will only be observed while authenticated.
@@ -444,8 +447,8 @@ And here is an example how we use the header to implement:
             	airship.getPushManager().setUserNotificationsEnabled(true);
         	}
     	});
-		}
-		```
+	}
+	```
 
 2. Add `BluedotAdapter.java` to your project package.
 
