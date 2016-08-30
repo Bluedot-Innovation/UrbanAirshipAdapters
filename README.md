@@ -24,17 +24,21 @@ In the first draft, this documentation only represent how to archive a light tou
 ### Getting started<a name="getting-started-ios">
 #### Integrate your project with Urban Airship SDK (image source: Urban Airship iOS SDK Setup)<a name="integrate-urban-airship-ios"/>
 1. Download latest version of [Urban Airship SDK](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion)
-2. Drag Airship and AirshipKit directories into the top level of your app.
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-airship.png)
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-airship-settings.png)
 
-3. Drag AirshipKit.xcodeproj into the top-level of your app project.
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-airshipkit-drag.png)
-4. With your project selected, select the General tab and add the AirshipKit.framework to the Embedded Binaries.
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-embedded.png)
-5. Set `Yes` for `Enable Modules` and `Link Frameworks Automatically` in your project `Build Settings`
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-embedded.png)
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-embedded.png)
+2. Drag AirshipKit.xcodeproj into the top-level of your app project.
+![alt text](http://docs.urbanairship.com/_images/framework-project-dependency1.png)
+
+3. With your project selected, select the General tab and add the AirshipKit.framework to the Embedded Binaries.
+![alt text](http://docs.urbanairship.com/_images/link-step-framework1.png)
+
+4. Make sure `AirshipKit.framework` shows up in the `Linked Frameworks and Libraries` section in the `General` tab for your target. And also ensure that your project’s Header Search Paths under Build Settings include the Airship directory (recursive).
+
+	![alt text](http://docs.urbanairship.com/_images/link-step-library1.png)
+	![alt text](http://docs.urbanairship.com/_images/build-settings1.png)
+
+5. Add `-ObjC -lz -lsqlite3` linker flag to Other Linker Flags to prevent “Selector Not Recognized” runtime exceptions and to include linkage to `libz` and `libsqlite3`. The linker flag `-force_load <path to library>/libUAirship-<version>.a` may be used in instances where using the `-ObjC` linker flag is undesirable.
+
+	![alt text](http://docs.urbanairship.com/_images/linker-flags1.png)
 6. Download AirshipConfig.plist which includes your `App Secret` and `App Key`. Then add it to your project.
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -54,7 +58,8 @@ In the first draft, this documentation only represent how to archive a light tou
 </dict>
 </plist>
 ```
-![alt text](https://go.urbanairship.com/bundle/209/images/ob-ios-plist.png)
+![alt text](http://docs.urbanairship.com/_images/ios-background-push-info-plist1.png)
+
 7. Enable Background Push by including the `UIBackgroundModes` key with the remote-notification value in your `Info.plist` and make it is set to `Required background modes` and `remote-notification` is set to `App downloads content in response to push notifications`.
 >Note:
 You need to upload your Apple Push Notification Service (APNs) Certificate in `Urban Airship` portal
@@ -70,8 +75,10 @@ See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-p
 2. Drag all the content from PointSDK into your project and update `Header Search Path` and `Library Search Path` from your project settings. For example,
 `Header Search Path` - `${PROJECT_DIR}/PointSDK/include` and
 `Library Search Path` - `${PROJECT_DIR}/PointSDK`.
-![alt text](http://docs.bluedotinnovation.com/download/attachments/3244077/004-HeaderSearchPath.jpg?version=1&modificationDate=1461945922000&api=v2)
+
+	![alt text](http://docs.bluedotinnovation.com/download/attachments/4685838/004-HeaderSearchPath.jpg?version=1&modificationDate=1469723999000&api=v2)
 3. Set `Other Linker Flags` to `-lBDPointSDK-${PLATFORM_NAME} -ObjC` in your project settings.
+
 4. Add following Framework Dependencies into your project
   * AudioToolbox
   * AVFoundation
@@ -81,11 +88,14 @@ See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-p
   * MapKit
   * SystemConfiguration
   * UIKit
+
 5. Add following values into `Required Device Capabilities` from your `Info.plist`.
   * gps
   * location-services
   * accelerometer
+
 6. Add key `NSLocationAlwaysUsageDescription` with a usage description to your `Info.plist`.
+
 7. Add following modes in the existing entry `Required background modes` from your `Info.plist`.
   * App plays audio or streams audio/video using AirPlay
   * App registers for location updates
@@ -306,7 +316,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:8.4.0'
 }
 ```
-![including](https://go.urbanairship.com/bundle/212/images/ob-android-maven.png)
 2. Verify that the `applicationId` is set in the project's `build.gradle` file.
 ```javascript
 android {
@@ -319,11 +328,8 @@ android {
     }
 }
 ```
-3. Sync your project with the gradle file, by clicking the "Sync Project with Gradle Files" button.
 
- ![alt text](https://go.urbanairship.com/bundle/212/images/ob-android-sync.png)
-
-4. Add the `airshipconfig.properties` to your application’s *src/main/assets* directory. (Note: You may have to create the src/main/assets directory.)
+3. Add the `airshipconfig.properties` to your application’s *src/main/assets* directory. (Note: You may have to create the src/main/assets directory.)
 
   Download `airshipconfig.properties` pre-populated with your Urban Airship app key and secret or add it manually.
   ```
@@ -341,7 +347,7 @@ android {
   developmentLogLevel = DEBUG
   productionLogLevel = ERROR
   ```
-5. Start Urban Airship services by invoking `takeOff` at the entry point in application. In order to do so, you need to have a class that extends [Application](http://developer.android.com/reference/android/app/Application.html) class and set the name of that class for the application entry in `AndroidManifest.xml`.
+4. Start Urban Airship services by invoking `takeOff` at the entry point in application. In order to do so, you need to have a class that extends [Application](http://developer.android.com/reference/android/app/Application.html) class and set the name of that class for the application entry in `AndroidManifest.xml`.
 
  ```
  <application android:name=".CustomApplication" … />
@@ -364,13 +370,13 @@ android {
  }
  ```
 
-6. Add the GCM Sender ID to your `airshipconfig.properties`. Your project ID is location in the Project card in the Google Developer Console. See the [GCM Setup documentation](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) for detailed instructions on setting up GCM Sender ID.
+5. Add the GCM Sender ID to your `airshipconfig.properties`. Your project ID is location in the Project card in the Google Developer Console. See the [GCM Setup documentation](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) for detailed instructions on setting up GCM Sender ID.
  ```javascript
  gcmSender = Your Google API Project Number
  ```
  >Note: You need to add your Project's Server API key and Package name in Urban Airship ( Settings > Services) . See the [GCM Setup documentation](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) for detailed instructions on obtaining your API Key.
 
-7. If there are no error then Build your project and you are ready to send you first test message.
+6. If there are no error then Build your project and you are ready to send you first test message.
 
 
 #### Integrate Bluedot Point SDK in your Project<a name="integrate-bluedot-android">
@@ -379,7 +385,7 @@ android {
 2. Unzip the downloaded file and copy the JAR file to app's libs folder. The libs folder is visible by changing the Project Explorer mode to Project from Android.
   ![From Android to Project structure mode](http://i.stack.imgur.com/zFsHB.png).
 
-  ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/3244098/as_setup.png?version=1&modificationDate=1461945921000&api=v2)
+  ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/4685867/as_setup.png?version=1&modificationDate=1469723997000&api=v2)
 
   Update `build.gradle` script to compile the dependency
 
@@ -421,10 +427,6 @@ android {
          android:exported="false">
      </service>
    ```
-
-4. Sync your project with the gradle file, by clicking the "Sync Project with Gradle Files" button.
-
-  ![Sync gradle](https://go.urbanairship.com/bundle/212/images/ob-android-sync.png)
 
 ## Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-android">
 
