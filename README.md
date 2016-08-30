@@ -40,30 +40,30 @@ In the first draft, this documentation only represent how to archive a light tou
 
 	![alt text](http://docs.urbanairship.com/_images/linker-flags1.png)
 6. Download AirshipConfig.plist which includes your `App Secret` and `App Key`. Then add it to your project.
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
-<dict>
-  <key>detectProvisioningMode</key>
-  <true/>
-  <key>developmentAppKey</key>
-  <string>Your Development App Key</string>
-  <key>developmentAppSecret</key>
-  <string>Your Development App Secret</string>
-  <key>productionAppKey</key>
-  <string>Your Production App Key</string>
-  <key>productionAppSecret</key>
-  <string>Your Production App Secret</string>
-</dict>
-</plist>
-```
-![alt text](http://docs.urbanairship.com/_images/ios-background-push-info-plist1.png)
+	```xml
+	<?xml version="1.0" encoding="UTF-8"?>
+	<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+	<plist version="1.0">
+	<dict>
+	  <key>detectProvisioningMode</key>
+	  <true/>
+	  <key>developmentAppKey</key>
+	  <string>Your Development App Key</string>
+	  <key>developmentAppSecret</key>
+	  <string>Your Development App Secret</string>
+	  <key>productionAppKey</key>
+	  <string>Your Production App Key</string>
+	  <key>productionAppSecret</key>
+	  <string>Your Production App Secret</string>
+	</dict>
+	</plist>
+	```
+	![alt text](http://docs.urbanairship.com/_images/ios-background-push-info-plist1.png)
 
 7. Enable Background Push by including the `UIBackgroundModes` key with the remote-notification value in your `Info.plist` and make it is set to `Required background modes` and `remote-notification` is set to `App downloads content in response to push notifications`.
->Note:
-You need to upload your Apple Push Notification Service (APNs) Certificate in `Urban Airship` portal
-See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-providers/apns.html) for detailed instructions on obtaining your .p12 certificate.
+	>Note:
+	You need to upload your Apple Push Notification Service (APNs) Certificate in `Urban Airship` portal
+	See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-providers/apns.html) for detailed instructions on obtaining your .p12 certificate.
 
 #### Integrate your project with Bluedot PointSDK<a name="integrate-bluedot-ios"/>
 1. Download PointSDK from the `Download` section of your `Point Access Dashboard`. The SDK includes a set of header files which are in the `include` folder and a pair of static libraries: `libBDPointSDK-iphoneos.a` and `libBDPointSDK-iphonesimulator.a`.
@@ -103,11 +103,11 @@ See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-p
 ### Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-ios"/>
 #### Start Urban Airship Services
 1. Import required header files
-```objc
-#import <AirshipKit/AirshipKit.h>
-```
+	```objc
+	#import <AirshipKit/AirshipKit.h>
+	```
 2. Take off Urban Airship Services from `application:didFinishLaunchingWithOptions:` method in your `AppDelegate`
-```objc
+	```objc
   // Call takeOff (which creates the UAirship singleton)
   [UAirship takeOff];
 
@@ -117,44 +117,44 @@ See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-p
   // appropriate time to enable push to increase the likelihood that the user will
   // accept notifications.
   [UAirship push].userPushNotificationsEnabled = YES;
-```
+	```
 
 #### Setup Bluedot Location Services
 1. Import required header files
-```objc
-#import <BDPointSDK.h>
-```
+	```objc
+	#import <BDPointSDK.h>
+	```
 2. Introducing `BDLocationManager` which is the entry-point for an app to start using Point SDK
-```objc
+	```objc
   [BDLocationManager instance];
-```
-To enable rules which are defined via `Bluedot Point Access` web interface, it is necessary to call the authentication method from `BDLocationManager` with your username, API key and package name.
-```objc
-  /**
-    * <p>Authenticate, and start a session with <b>Point Access</b>.
-    * This behavior is asynchronous and this method will return immediately. Progress of the authentication process can be
-    * monitored by callbacks provided via the <b>sessionDelegate</b> property, or the KVO-enabled <b>authenticationState</b> property.</p>
-    *
-    * Location Services are required immediately after a successful authentication.  If your App has not already called
-    * [CLLocationManager auth]
-    *
-    * <p>It is the responsibility of the Application to respect the authentication life-cycle and ensure that @ref BDLocationManager
-    * is not already Authenticated, or in the process of Authenticating, while calling this method.</p>
-    *
-    * @exception BDPointSessionException Calling this method while in an invalid state will result in a @ref BDPointSessionException being thrown.
-  */
-  [[BDLocationManager instance] authenticateWithApiKey: apiKey
-                                           packageName: packageName
-                                              username: username];
-  /**
-    * <p>Like authenticateWithApiKey:packageName:username: but allows the URL of <b>Point Access</b> to be overridden to a non-default value.
-    * This should not normally be used; but may become necessary in certain support scenarios.</p>
-  */
-  [[BDLocationManager instance] authenticateWithApiKey: apiKey
-                                           packageName: packageName
-                                              username: username
-                                           endpointURL: endpointURL];
-```
+	```
+	To enable rules which are defined via `Bluedot Point Access` web interface, it is necessary to call the authentication method from `BDLocationManager` with your username, API key and package name.
+	```objc
+	  /**
+	    * <p>Authenticate, and start a session with <b>Point Access</b>.
+	    * This behavior is asynchronous and this method will return immediately. Progress of the authentication process can be
+	    * monitored by callbacks provided via the <b>sessionDelegate</b> property, or the KVO-enabled <b>authenticationState</b> property.</p>
+	    *
+	    * Location Services are required immediately after a successful authentication.  If your App has not already called
+	    * [CLLocationManager auth]
+	    *
+	    * <p>It is the responsibility of the Application to respect the authentication life-cycle and ensure that @ref BDLocationManager
+	    * is not already Authenticated, or in the process of Authenticating, while calling this method.</p>
+	    *
+	    * @exception BDPointSessionException Calling this method while in an invalid state will result in a @ref BDPointSessionException being thrown.
+	  */
+	  [[BDLocationManager instance] authenticateWithApiKey: apiKey
+	                                           packageName: packageName
+	                                              username: username];
+	  /**
+	    * <p>Like authenticateWithApiKey:packageName:username: but allows the URL of <b>Point Access</b> to be overridden to a non-default value.
+	    * This should not normally be used; but may become necessary in certain support scenarios.</p>
+	  */
+	  [[BDLocationManager instance] authenticateWithApiKey: apiKey
+	                                           packageName: packageName
+	                                              username: username
+	                                           endpointURL: endpointURL];
+	```
 3. `BDLocationManager` expose properties for two delegates with additional features
   - `sessionDelegate` implements `BDPSessionDelegate` protocol
     - `BDPSessionDelegate` protocol provides callbacks informing the application when authentication state changes. The rules defined will only be observed while authenticated.
@@ -294,40 +294,40 @@ And here is an example how we use the header to implement:
 ### Getting started<a name="getting-started-android">
 #### Integrate your project with Urban Airship SDK (image source: Urban Airship Android SDK Setup)<a name="integrate-urban-airship-android"/>
 1. Modify your project's `build.gradle` script file to include Urban Airship and other dependencies.
-```javascript
-repositories {
-...
-    maven {
-        url  "https://urbanairship.bintray.com/android"
-    }
-}
-dependencies {
-  ...
-    // Urban Airship SDK
-    compile 'com.urbanairship.android:urbanairship-sdk:7.1.+'
+	```javascript
+	repositories {
+	...
+	    maven {
+	        url  "https://urbanairship.bintray.com/android"
+	    }
+	}
+	dependencies {
+	  ...
+	    // Urban Airship SDK
+	    compile 'com.urbanairship.android:urbanairship-sdk:7.1.+'
 
-    //Required for Android push notifications
-    compile 'com.google.android.gms:play-services-gcm:7.5.0'
+	    //Required for Android push notifications
+	    compile 'com.google.android.gms:play-services-gcm:7.5.0'
 
-    // Recommended for in-app messaging
-    compile 'com.android.support:cardview-v7:23.3.0'
+	    // Recommended for in-app messaging
+	    compile 'com.android.support:cardview-v7:23.3.0'
 
-    // Recommended for location services
-    compile 'com.google.android.gms:play-services-location:8.4.0'
-}
-```
+	    // Recommended for location services
+	    compile 'com.google.android.gms:play-services-location:8.4.0'
+	}
+	```
 2. Verify that the `applicationId` is set in the project's `build.gradle` file.
-```javascript
-android {
-    …
+	```javascript
+	android {
+	    …
 
-    defaultConfig {
-        …
+	    defaultConfig {
+	        …
 
-        applicationId "com.example.application"
-    }
-}
-```
+	        applicationId "com.example.application"
+	    }
+	}
+	```
 
 3. Add the `airshipconfig.properties` to your application’s *src/main/assets* directory. (Note: You may have to create the src/main/assets directory.)
 
@@ -349,32 +349,32 @@ android {
   ```
 4. Start Urban Airship services by invoking `takeOff` at the entry point in application. In order to do so, you need to have a class that extends [Application](http://developer.android.com/reference/android/app/Application.html) class and set the name of that class for the application entry in `AndroidManifest.xml`.
 
- ```
- <application android:name=".CustomApplication" … />
- ```
- Then, override the application's  `onCreate` to call [UAirship.takeOff](http://docs.urbanairship.com/reference/libraries/android/latest/reference/com/urbanairship/UAirship.html#takeOff(android.app.Application)).
+	 ```
+	 <application android:name=".CustomApplication" … />
+	 ```
+	 Then, override the application's  `onCreate` to call [UAirship.takeOff](http://docs.urbanairship.com/reference/libraries/android/latest/reference/com/urbanairship/UAirship.html#takeOff(android.app.Application)).
 
- ```java
- @Override
- public void onCreate() {
-    super.onCreate();
+	 ```java
+	 @Override
+	 public void onCreate() {
+	    super.onCreate();
 
-    UAirship.takeOff(this, new UAirship.OnReadyCallback() {
-        @Override
-        public void onAirshipReady(UAirship airship) {
+	    UAirship.takeOff(this, new UAirship.OnReadyCallback() {
+	        @Override
+	        public void onAirshipReady(UAirship airship) {
 
-            // Enable user notifications
-            airship.getPushManager().setUserNotificationsEnabled(true);
-        }
-    });
- }
- ```
+	            // Enable user notifications
+	            airship.getPushManager().setUserNotificationsEnabled(true);
+	        }
+	    });
+	 }
+	 ```
 
 5. Add the GCM Sender ID to your `airshipconfig.properties`. Your project ID is location in the Project card in the Google Developer Console. See the [GCM Setup documentation](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) for detailed instructions on setting up GCM Sender ID.
- ```javascript
- gcmSender = Your Google API Project Number
- ```
- >Note: You need to add your Project's Server API key and Package name in Urban Airship ( Settings > Services) . See the [GCM Setup documentation](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) for detailed instructions on obtaining your API Key.
+	```javascript
+	gcmSender = Your Google API Project Number
+	```
+	>Note: You need to add your Project's Server API key and Package name in Urban Airship ( Settings > Services) . See the [GCM Setup documentation](http://docs.urbanairship.com/reference/push-providers/gcm.html#android-gcm-setup) for detailed instructions on obtaining your API Key.
 
 6. If there are no error then Build your project and you are ready to send you first test message.
 
