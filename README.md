@@ -431,21 +431,21 @@ android {
 ## Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-android">
 
 1. Start Urban Airship services by overriding `onCreate` in your custom Application class
-```java
-@Override
-public void onCreate() {
-    super.onCreate();
+	```java
+	@Override
+	public void onCreate() {
+    	super.onCreate();
 
-    UAirship.takeOff(this, new UAirship.OnReadyCallback() {
-        @Override
-        public void onAirshipReady(UAirship airship) {
+    	UAirship.takeOff(this, new UAirship.OnReadyCallback() {
+      		@Override
+        	public void onAirshipReady(UAirship airship) {
 
-            // Enable user notifications
-            airship.getPushManager().setUserNotificationsEnabled(true);
-        }
-    });
-}
-```
+            	// Enable user notifications
+            	airship.getPushManager().setUserNotificationsEnabled(true);
+        	}
+    	});
+		}
+		```
 2. Add `BluedotAdapter.java` to your project package.
 
 3. Starting Point SDK services using Adapter.
@@ -457,10 +457,10 @@ public void onCreate() {
   private final String PACKAGE_NAME = Bluedot package name assigned to your application;
 
   //Get instance of the Adapter;
-  bluedotAdapter= BluedotAdapter.getInstance(this);
+  bluedotAdapter = BluedotAdapter.getInstance(this);
 
   // Provide details required for authentication
-  bluedotAdapter.startSDK(PACKAGE_NAME,API_KEY,USER_NAME,URL,true);
+  bluedotAdapter.startSDK(PACKAGE_NAME, API_KEY, USER_NAME, true);
   ```
 4. Bluedot SDK provides event listeners
   * `ServiceStatusListener` is listener that lets user's Bluedot application know when service status changes.
