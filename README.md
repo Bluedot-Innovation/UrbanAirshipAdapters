@@ -446,10 +446,10 @@ android {
     	});
 		}
 		```
+
 2. Add `BluedotAdapter.java` to your project package.
 
 3. Starting Point SDK services using Adapter.
-
   ```java
   // Bluedot User name, API key and Package name
   private final String USER_NAME = Email Address used for registration;
@@ -462,6 +462,7 @@ android {
   // Provide details required for authentication
   bluedotAdapter.startSDK(PACKAGE_NAME, API_KEY, USER_NAME, true);
   ```
+
 4. Bluedot SDK provides event listeners
   * `ServiceStatusListener` is listener that lets user's Bluedot application know when service status changes.
       ```java
