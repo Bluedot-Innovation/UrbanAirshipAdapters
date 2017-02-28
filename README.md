@@ -31,14 +31,10 @@ In the first draft, this documentation only represent how to archive a light tou
 3. With your project selected, select the General tab and add the AirshipKit.framework to the Embedded Binaries.
 ![alt text](http://docs.urbanairship.com/_images/link-step-framework1.png)
 
-4. Make sure `AirshipKit.framework` shows up in the `Linked Frameworks and Libraries` section in the `General` tab for your target. And also ensure that your project’s Header Search Paths under Build Settings include the Airship directory (recursive).
+4. Make sure AirshipKit.framework shows up in the Linked Frameworks and Libraries section in the General tab for your target.
 
-	![alt text](http://docs.urbanairship.com/_images/link-step-library1.png)
-	![alt text](http://docs.urbanairship.com/_images/build-settings1.png)
+5. Verify Enable Modules and Link Frameworks Automatically are enabled in the project’s Build Settings.
 
-5. Add `-ObjC -lz -lsqlite3` linker flag to Other Linker Flags to prevent “Selector Not Recognized” runtime exceptions and to include linkage to `libz` and `libsqlite3`. The linker flag `-force_load <path to library>/libUAirship-<version>.a` may be used in instances where using the `-ObjC` linker flag is undesirable.
-
-	![alt text](http://docs.urbanairship.com/_images/linker-flags1.png)
 6. Download AirshipConfig.plist which includes your `App Secret` and `App Key`. Then add it to your project.
 	```xml
 	<?xml version="1.0" encoding="UTF-8"?>
@@ -66,17 +62,19 @@ In the first draft, this documentation only represent how to archive a light tou
 	See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-providers/apns.html) for detailed instructions on obtaining your .p12 certificate.
 
 #### Integrate your project with Bluedot PointSDK<a name="integrate-bluedot-ios"/>
-1. Download PointSDK from the `Download` section of your `Point Access Dashboard`. The SDK includes a set of header files which are in the `include` folder and a pair of static libraries: `libBDPointSDK-iphoneos.a` and `libBDPointSDK-iphonesimulator.a`.
+1. Download PointSDK from the `Download` section of your `Point Access Dashboard`. The SDK includes a set of header files which are in the `include` folder, a pair of static libraries: `libBDPointSDK-iphoneos.a` and `libBDPointSDK-iphonesimulator.a` and a resource bundle file `BDDataModel.bundle`.
  - A set of header files in the include folder. These header files declare the Application Programming Interface (API) between your app and Point SDK.For simplicity, you need only include BDPointSDK.h in your own source code files to include all other Point SDK headers.
  - A pair of static library files:
     - libBDPointSDK-iphoneos.a - This static library contains arm7 and arm64 architecture slices for Point SDK. The application will be automatically linked against this library when compiling for a device, which includes when archiving for distribution through the App Store.
     - libBDPointSDK-iphonesimulator.a - This static library contains i386 and x86_64 architecture slices for the Point SDK.  The application will be automatically linked against this library when compiling for the iOS simulator; during development.
+ - A resource bundle:
+	 - BDDataModel.bundle - The resource bundle that contains data files which is required for Point SDK operation.
 
 2. Drag all the content from PointSDK into your project and update `Header Search Path` and `Library Search Path` from your project settings. For example,
 `Header Search Path` - `${PROJECT_DIR}/PointSDK/include` and
 `Library Search Path` - `${PROJECT_DIR}/PointSDK`.
 
-	![alt text](http://docs.bluedotinnovation.com/download/attachments/4685838/004-HeaderSearchPath.jpg?version=1&modificationDate=1469723999000&api=v2)
+	![alt text](http://docs.bluedotinnovation.com/download/attachments/7700586/004-HeaderSeachPath.png?version=1&modificationDate=1488205955000&api=v2)
 3. Set `Other Linker Flags` to `-lBDPointSDK-${PLATFORM_NAME} -ObjC` in your project settings.
 
 4. Add following Framework Dependencies into your project
@@ -97,7 +95,6 @@ In the first draft, this documentation only represent how to archive a light tou
 6. Add key `NSLocationAlwaysUsageDescription` with a usage description to your `Info.plist`.
 
 7. Add following modes in the existing entry `Required background modes` from your `Info.plist`.
-  * App plays audio or streams audio/video using AirPlay
   * App registers for location updates
 
 ### Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-ios"/>
@@ -144,14 +141,14 @@ In the first draft, this documentation only represent how to archive a light tou
 	    * is not already Authenticated, or in the process of Authenticating, while calling this method.</p>
 	    *
 	    * @exception BDPointSessionException Calling this method while in an invalid state will result in a @ref BDPointSessionException being thrown.
-	  */
+	    */
 	  [[BDLocationManager instance] authenticateWithApiKey: apiKey
 	                                           packageName: packageName
 	                                              username: username];
 	  /**
 	    * <p>Like authenticateWithApiKey:packageName:username: but allows the URL of <b>Point Access</b> to be overridden to a non-default value.
 	    * This should not normally be used; but may become necessary in certain support scenarios.</p>
-	  */
+	    */
 	  [[BDLocationManager instance] authenticateWithApiKey: apiKey
 	                                           packageName: packageName
 	                                              username: username
@@ -168,13 +165,13 @@ In the first draft, this documentation only represent how to archive a light tou
     ```
     - Any `Custom Action` defined is triggered. Either of the following callbacks will be invoked, depending on whether the trigger is a geofence or beacon.
     ```objc
-    didCheckIntoFence:inZone:atCoordinate:onDate:willCheckOut:
-    didCheckIntoBeacon:inZone:withProximity:onDate:willCheckOut:
+    didCheckIntoFence:inZone:atLocation:willCheckOut:withCustomData:
+    didCheckIntoBeacon:inZone:atLocation:withProximity:willCheckOut:withCustomData:
     ```
     - Leave the checked-in area. If `willCheckOut` flag was set, either of the following corresponding callbacks will be made:
     ```objc
-    didCheckOutFromFence:inZone:onDate:withDuration:
-    didCheckOutFromBeacon:inZone:withProximity:onDate:withDuration:
+    didCheckOutFromFence:inZone:onDate:withDuration:withCustomData:
+    didCheckOutFromBeacon:inZone:withProximity:onDate:withDuration:withCustomData:
     ```
     >Note: `Checkout` doesn't apply to geolines.
 
@@ -194,27 +191,32 @@ We define a header file called _UABluedotLocationServiceAdapter.h_:
 
 - (void)didCheckIntoFence: (BDFenceInfo *)fence
                    inZone: (BDZoneInfo *)zoneInfo
-             atCoordinate: (BDLocationCoordinate2D)coordinate
-                   onDate: (NSDate *)date
+               atLocation: (BDLocationInfo *)location
              willCheckOut: (BOOL)willCheckOut
+           withCustomData: (NSDictionary *)customData
                  withTags: (NSArray<NSString *> *)tags;
 
 - (void)didCheckOutFromFence: (BDFenceInfo *)fence
                       inZone: (BDZoneInfo *)zoneInfo
                       onDate: (NSDate *)date
+                withDuration: (NSUInteger)checkedInDuration
+              withCustomData: (NSDictionary *)customData
                     withTags: (NSArray<NSString *> *)tags;
 
 - (void)didCheckIntoBeacon: (BDBeaconInfo *)beacon
                     inZone: (BDZoneInfo *)zoneInfo
+                atLocation: (BDLocationInfo *)locationInfo
              withProximity: (CLProximity)proximity
-                    onDate: (NSDate *)date
               willCheckOut: (BOOL)willCheckOut
+            withCustomData: (NSDictionary *)customData
                   withTags: (NSArray<NSString *> *)tags;
 
 - (void)didCheckOutFromBeacon: (BDBeaconInfo *)beacon
                        inZone: (BDZoneInfo *)zoneInfo
                 withProximity: (CLProximity)proximity
                        onDate: (NSDate *)date
+                 withDuration: (NSUInteger)checkedInDuration
+               withCustomData: (NSDictionary *)customData
                      withTags: (NSArray<NSString *> *)tags;
 
 - (void)didAuthenticate;
@@ -236,7 +238,7 @@ We define a header file called _UABluedotLocationServiceAdapter.h_:
   * apiKey      - bluedotApiKey
   * username    - bluedotUsername
   * packageName - bluedotPackageName
-*/
+  */
 - (void)authenticate;
 
 // End current session and logout with Bluedot PointSDK
@@ -274,9 +276,9 @@ And here is an example how we use the header to implement:
 
 - (void)didCheckIntoFence: (BDFenceInfo *)fence
                    inZone: (BDZoneInfo *)zoneInfo
-             atCoordinate: (BDLocationCoordinate2D)coordinate
-                   onDate: (NSDate *)date
+               atLocation: (BDLocationInfo *)location
              willCheckOut: (BOOL)willCheckOut
+           withCustomData: (NSDictionary *)customData
                  withTags: (NSArray<NSString *> *)tags
 {
   // Handle the provided location related information and tags set on the device
@@ -285,6 +287,8 @@ And here is an example how we use the header to implement:
 - (void)didCheckOutFromFence: (BDFenceInfo *)fence
                       inZone: (BDZoneInfo *)zoneInfo
                       onDate: (NSDate *)date
+                withDuration: (NSUInteger)checkedInDuration
+              withCustomData: (NSDictionary *)customData
                     withTags: (NSArray<NSString *> *)tags
 {
   // Handle the provided location related information and tags removed from the device
@@ -388,7 +392,7 @@ And here is an example how we use the header to implement:
 2. Unzip the downloaded file and copy the JAR file to app's libs folder. The libs folder is visible by changing the Project Explorer mode to Project from Android.
   ![From Android to Project structure mode](http://i.stack.imgur.com/zFsHB.png).
 
-  ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/4685867/as_setup.png?version=1&modificationDate=1469723997000&api=v2)
+  ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/7700623/image2016-11-22%2015%3A11%3A20.png?version=1&modificationDate=1488205953000&api=v2)
 
   Update `build.gradle` script to compile the dependency
 
@@ -424,11 +428,18 @@ And here is an example how we use the header to implement:
          android:exported="false">
      </service>
 
+	<service
+		 android:name="au.com.bluedot.point.net.engine.DataJobScheduler"
+	 	android:exported="false"
+		 android:permission="android.permission.BIND_JOB_SERVICE">
+	</service>
+
      <!-- Required for Beacons integration -->
      <service
          android:name="au.com.bluedot.point.beacon.BlueDotBLEService"
          android:exported="false">
      </service>
+
    ```
 
 ## Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-android">
@@ -467,81 +478,85 @@ And here is an example how we use the header to implement:
   ```
 
 4. Bluedot SDK provides event listeners
-  * `ServiceStatusListener` is listener that lets user's Bluedot application know when service status changes.
+	* `ServiceStatusListener` is listener that lets user's Bluedot application know when service status changes.
       ```java
       /**
-      * <p>It is called when BlueDotPointService started successful, application logic code using the Bluedot service could start from here.</p>
-      * <p>This method is off the UI thread.</p>
-      */
+       * <p>It is called when BlueDotPointService started successful, application logic code using the Bluedot service could start from here.</p>
+       * <p>This method is off the UI thread.</p>
+       */
       void onBlueDotPointServiceStartedSuccess();
 
       /**
-      * <p>This method notifies the client application that BlueDotPointService is stopped. Application could release the resources related to Bluedot service from here.</p>
-      * <p>It is called off the UI thread.</p>
-      */
+        * <p>This method notifies the client application that BlueDotPointService is stopped. Application could release the resources related to Bluedot service from here.</p>
+        * <p>It is called off the UI thread.</p>
+        */
       void onBlueDotPointServiceStop();
 
       /**
-      * <p>The method delivers the error from BlueDotPointService by a generic BDError. There are several types of error such as
-      * - BDAuthenticationError (fatal)
-      * - BDNetworkError (fatal / non fatal)
-      * - LocationServiceNotEnabledError (fatal / non fatal)
-      * - RuleDownloadError (non fatal)
-      * - BLENotAvailableError (non fatal)
-      * - BluetoothNotEnabledError (non fatal)
-      * <p> The BDError.isFatal() indicates if error is fatal and service is not operable.
-      * Followed by onBlueDotPointServiceStop() indicating service is stopped.
-      * <p> The BDError.getReason() is useful to analyse error cause.
-      * @param error
-      */
+        * <p>The method delivers the error from BlueDotPointService by a generic BDError. There are several types of error such as
+        * - BDAuthenticationError (fatal)
+        * - BDNetworkError (fatal / non fatal)
+        * - LocationServiceNotEnabledError (fatal / non fatal)
+        * - RuleDownloadError (non fatal)
+        * - BLENotAvailableError (non fatal)
+        * - BluetoothNotEnabledError (non fatal)
+        * <p> The BDError.isFatal() indicates if error is fatal and service is not operable.
+        * Followed by onBlueDotPointServiceStop() indicating service is stopped.
+        * <p> The BDError.getReason() is useful to analyse error cause.
+        * @param error
+        */
       void onBlueDotPointServiceError(BDError error);
 
       /**
-      * <p>The method deliveries the ZoneInfo list when the rules are updated. Application is able to get the latest ZoneInfo when the rules are updated.</p>
-      * @param zoneInfoList
-      */
+        * <p>The method deliveries the ZoneInfo list when the rules are updated. Application is able to get the latest ZoneInfo when the rules are updated.</p>
+        * @param zoneInfoList
+        */
       void onRuleUpdate(List<ZoneInfo> zoneInfoList);
       ```
-  * `ApplicationNotificationListener` is callback interface to be used if user's Bluedot application is subscribed to receive ApplicationNotification.
+	* `ApplicationNotificationListener` is callback interface to be used if user's Bluedot application is subscribed to receive ApplicationNotification.
       ```java
       /**
-      * This callback happens when user is subscribed to Custom Action
-      * and check into any fence under that Zone
-      * @param fence      - Fence triggered
-      * @param zoneInfo   - Zone information Fence belongs to
-      * @param location   - geographical coordinate where trigger happened
-      * @param isCheckOut - CheckOut will be tracked and delivered once device left the Fence
-      */
-      public void onCheckIntoFence(Fence fence, ZoneInfo zoneInfo, Location location, boolean isCheckOut);
+        * This callback happens when user is subscribed to Custom Action
+        * and check into any fence under that Zone
+        * @param fence      - Fence triggered
+        * @param zoneInfo   - Zone information Fence belongs to
+        * @param location   - geographical coordinate where trigger happened
+	      * @param customData - custom data associated with this Custom Action
+        * @param isCheckOut - CheckOut will be tracked and delivered once device left the Fence
+        */
+      public void onCheckIntoFence(Fence fence, ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut);
 
       /**
-      * This callback happens when user is subscribed to Custom Action
-      * and checked out from fence under that Zone which has CheckOut enabled
-      * @param fence     - Fence user is checked out from
-      * @param zoneInfo  - Zone information Fence belongs to
-      * @param dwellTime - time spent inside the Fence; in minutes
-      */
-      public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime);
+        * This callback happens when user is subscribed to Custom Action
+        * and checked out from fence under that Zone which has CheckOut enabled
+        * @param fence      - Fence user is checked out from
+        * @param zoneInfo   - Zone information Fence belongs to
+        * @param dwellTime  - time spent inside the Fence; in minutes
+	      * @param customData - custom data associated with this Custom Action
+        */
+      public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData);
 
       /**
-      * This callback happens when user is subscribed to Custom Action
-      * and check into any beacon under that Zone
-      * @param beaconInfo - Beacon triggered
-      * @param zoneInfo   - Zone information Beacon belongs to
-      * @param location   - geographical coordinate where trigger happened
-      * @param proximity  - the proximity at which the trigger occurred
-      * @param isCheckOut - CheckOut will be tracked and delivered once device left the Beacon advertisement range
-      */
-      public void onCheckIntoBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, Location location, Proximity proximity, boolean isCheckOut);
+        * This callback happens when user is subscribed to Custom Action
+        * and check into any beacon under that Zone
+        * @param beaconInfo - Beacon triggered
+        * @param zoneInfo   - Zone information Beacon belongs to
+        * @param location   - geographical coordinate of triggered beacon's location
+        * @param proximity  - the proximity at which the trigger occurred
+			  * @param customData - custom data associated with this Custom Action
+        * @param isCheckOut - CheckOut will be tracked and delivered once device left the Beacon advertisement range
+        */
+      public void onCheckIntoBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, LocationInfo location, Proximity proximity, Map<String, String> customData, boolean isCheckOut;
 
       /**
-      * This callback happens when user is subscribed to Custom Action
-      * and checked out from beacon under that Zone which has CheckOut enabled
-      * @param beaconInfo - Beacon is checked out from
-      * @param zoneInfo   - Zone information Beacon belongs to
-      * @param dwellTime  - time spent inside the Beacon area; in minutes
-      */
-      public void onCheckedOutFromBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, int dwellTime);
+        * This callback happens when user is subscribed to Custom Action
+        * and checked out from beacon under that Zone which has CheckOut enabled
+        * @param beaconInfo - Beacon is checked out from
+        * @param zoneInfo   - Zone information Beacon belongs to
+        * @param dwellTime  - time spent inside the Beacon area; in minutes
+			  * @param customData - custom data associated with this Custom Action
+        */
+      public void onCheckedOutFromBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData);
       ```
       > Note:
         * Only `Custom Actions` defined for a Zone will trigger *CheckIn* and *Checkout* callbacks.
@@ -568,13 +583,13 @@ private final long TAG_EXPIRY_ms = 7000;
 
 private ApplicationNotificationListener applicationNotificationListener = new ApplicationNotificationListener() {
         @Override
-        public void onCheckIntoFence(final Fence fence, final ZoneInfo zoneInfo, Location location, boolean isCheckOut) {
+        public void onCheckIntoFence(final Fence fence, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
                     .addTag("fence_" + fence.getName())
                     .apply();
 
-            if(fence.getGeometry() instanceof LineString) {
+            if(fence.getGeometry() instanceof LineString  || isCheckOut==false) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -584,13 +599,11 @@ private ApplicationNotificationListener applicationNotificationListener = new Ap
                                 .apply();
                     }
                 },TAG_EXPIRY_ms);
-
             }
-
         }
 
         @Override
-        public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime) {
+        public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
             UAirship.shared().getPushManager().editTags()
                     .removeTag("zone_" + zoneInfo.getZoneName())
                     .removeTag("fence_" + fence.getName())
@@ -598,7 +611,7 @@ private ApplicationNotificationListener applicationNotificationListener = new Ap
         }
 
         @Override
-        public void onCheckIntoBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, Location location, Proximity proximity, boolean isCheckOut) {
+        public void onCheckIntoBeacon(final BeaconInfo beaconInfo, final ZoneInfo zoneInfo, LocationInfo location, Proximity proximity, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
                     .addTag("beacon_" + beaconInfo.getName())
@@ -606,7 +619,7 @@ private ApplicationNotificationListener applicationNotificationListener = new Ap
         }
 
         @Override
-        public void onCheckedOutFromBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, int dwellTime) {
+        public void onCheckedOutFromBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
             UAirship.shared().getPushManager().editTags()
                     .removeTag("zone_" + zoneInfo.getZoneName())
                     .removeTag("beacon_" + beaconInfo.getName())

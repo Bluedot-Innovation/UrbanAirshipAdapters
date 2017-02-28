@@ -97,9 +97,9 @@
 
 - (void)didCheckIntoFence: (BDFenceInfo *)fence
                    inZone: (BDZoneInfo *)zoneInfo
-             atCoordinate: (BDLocationCoordinate2D)coordinate
-                   onDate: (NSDate *)date
+               atLocation: (BDLocationInfo *)location
              willCheckOut: (BOOL)willCheckOut
+           withCustomData: (NSDictionary *)customData
 {
     NSArray * tags = [self tagsFromSpatialObjectInfo:fence andZoneInfo:zoneInfo];
     
@@ -112,9 +112,14 @@
         [NSTimer scheduledTimerWithTimeInterval:TAG_EXPIRY target:self selector:@selector(resetTags:) userInfo:tags repeats:NO];
     }
     
-    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckIntoFence:inZone:atCoordinate:onDate:willCheckOut:withTags:)] )
+    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckIntoFence:inZone:atLocation:willCheckOut:withCustomData:withTags:)] )
     {
-        [_delegate didCheckIntoFence:fence inZone:zoneInfo atCoordinate:coordinate onDate:date willCheckOut:willCheckOut withTags:tags];
+        [_delegate didCheckIntoFence: fence
+                              inZone: zoneInfo
+                          atLocation: location
+                        willCheckOut: willCheckOut
+                      withCustomData: customData
+                            withTags: tags];
     }
 }
 
@@ -122,6 +127,7 @@
                       inZone: (BDZoneInfo *)zoneInfo
                       onDate: (NSDate *)date
                 withDuration: (NSUInteger)checkedInDuration
+              withCustomData: (NSDictionary *)customData
 {
     NSArray * tags = [self tagsFromSpatialObjectInfo:fence andZoneInfo:zoneInfo];
     
@@ -129,17 +135,23 @@
     
     [[UAirship push] updateRegistration];
     
-    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckOutFromBeacon:inZone:withProximity:onDate:withTags:)] )
+    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckOutFromBeacon:inZone:withProximity:onDate:withDuration:withCustomData:withTags:)] )
     {
-        [_delegate didCheckOutFromFence:fence inZone:zoneInfo onDate:date withTags:tags];
+        [_delegate didCheckOutFromFence: fence
+                                 inZone: zoneInfo
+                                 onDate: date
+                           withDuration: checkedInDuration
+                         withCustomData: customData
+                               withTags: tags];
     }
 }
 
 - (void)didCheckIntoBeacon: (BDBeaconInfo *)beacon
                     inZone: (BDZoneInfo *)zoneInfo
+                atLocation: (BDLocationInfo *)location
              withProximity: (CLProximity)proximity
-                    onDate: (NSDate *)date
               willCheckOut: (BOOL)willCheckOut
+            withCustomData: (NSDictionary *)customData
 {
     NSArray * tags = [self tagsFromSpatialObjectInfo:beacon andZoneInfo:zoneInfo];
     
@@ -153,9 +165,15 @@
     }
     
     
-    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckIntoBeacon:inZone:withProximity:onDate:willCheckOut:withTags:)] )
+    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckIntoBeacon:inZone:atLocation:withProximity:willCheckOut:withCustomData:withTags:)] )
     {
-        [_delegate didCheckIntoBeacon:beacon inZone:zoneInfo withProximity:proximity onDate:date willCheckOut:willCheckOut withTags:tags];
+        [_delegate didCheckIntoBeacon: beacon
+                               inZone: zoneInfo
+                           atLocation: location
+                        withProximity: proximity
+                         willCheckOut: willCheckOut
+                       withCustomData: customData
+                             withTags: tags];
     }
 }
 
@@ -164,6 +182,7 @@
                 withProximity: (CLProximity)proximity
                        onDate: (NSDate *)date
                  withDuration: (NSUInteger)checkedInDuration
+               withCustomData: (NSDictionary *)customData
 {
     NSArray * tags = [self tagsFromSpatialObjectInfo:beacon andZoneInfo:zoneInfo];
     
@@ -171,9 +190,15 @@
     
     [[UAirship push] updateRegistration];
     
-    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckOutFromBeacon:inZone:withProximity:onDate:withTags:)] )
+    if ( _delegate && [_delegate respondsToSelector:@selector(didCheckOutFromBeacon:inZone:withProximity:onDate:withDuration:withCustomData:withTags:)] )
     {
-        [_delegate didCheckOutFromBeacon:beacon inZone:zoneInfo withProximity:proximity onDate:date withTags:tags];
+        [_delegate didCheckOutFromBeacon: beacon
+                                  inZone: zoneInfo
+                           withProximity: proximity
+                                  onDate: date
+                            withDuration: checkedInDuration
+                          withCustomData: customData
+                                withTags: tags];
     }
 }
 

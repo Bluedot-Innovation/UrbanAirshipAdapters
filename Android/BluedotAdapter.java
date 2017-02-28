@@ -1,13 +1,15 @@
 package au.com.bluedot.urbanairshipdemoapp;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.urbanairship.UAirship;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import au.com.bluedot.application.model.Proximity;
 import au.com.bluedot.application.model.geo.Fence;
@@ -16,6 +18,7 @@ import au.com.bluedot.point.ApplicationNotificationListener;
 import au.com.bluedot.point.ServiceStatusListener;
 import au.com.bluedot.point.net.engine.BDError;
 import au.com.bluedot.point.net.engine.BeaconInfo;
+import au.com.bluedot.point.net.engine.LocationInfo;
 import au.com.bluedot.point.net.engine.ServiceManager;
 import au.com.bluedot.point.net.engine.ZoneInfo;
 
@@ -70,7 +73,7 @@ public class BluedotAdapter {
          */
         @Override
         public void onBlueDotPointServiceError(BDError bdError) {
-
+            System.out.println(bdError);
         }
 
         /**
@@ -94,10 +97,11 @@ public class BluedotAdapter {
          * @param fence      - Fence triggered
          * @param zoneInfo   - Zone information Fence belongs to
          * @param location   - geographical coordinate where trigger happened
+         * @param customData - custom data associated with this Custom Action
          * @param isCheckOut - CheckOut will be tracked and delivered once device left the Fence
          */
         @Override
-        public void onCheckIntoFence(final Fence fence, final ZoneInfo zoneInfo, Location location, boolean isCheckOut) {
+        public void onCheckIntoFence(final Fence fence, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
                     .addTag("fence_" + fence.getName())
@@ -124,9 +128,10 @@ public class BluedotAdapter {
          * @param fence     - Fence user is checked out from
          * @param zoneInfo  - Zone information Fence belongs to
          * @param dwellTime - time spent inside the Fence; in minutes
+         * @param customData - custom data associated with this Custom Action
          */
         @Override
-        public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime) {
+        public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
             UAirship.shared().getPushManager().editTags()
                     .removeTag("zone_" + zoneInfo.getZoneName())
                     .removeTag("fence_" + fence.getName())
@@ -138,12 +143,13 @@ public class BluedotAdapter {
          * and check into any beacon under that Zone
          * @param beaconInfo - Beacon triggered
          * @param zoneInfo   - Zone information Beacon belongs to
-         * @param location   - geographical coordinate where trigger happened
+         * @param location   - geographical coordinate of triggered beacon's location
          * @param proximity  - the proximity at which the trigger occurred
+         * @param customData - custom data associated with this Custom Action
          * @param isCheckOut - CheckOut will be tracked and delivered once device left the Beacon advertisement range
          */
         @Override
-        public void onCheckIntoBeacon(final BeaconInfo beaconInfo, final ZoneInfo zoneInfo, Location location, Proximity proximity, boolean isCheckOut) {
+        public void onCheckIntoBeacon(final BeaconInfo beaconInfo, final ZoneInfo zoneInfo, LocationInfo location, Proximity proximity, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
                     .addTag("beacon_" + beaconInfo.getName())
@@ -161,16 +167,17 @@ public class BluedotAdapter {
                 },TAG_EXPIRY_ms);
             }
         }
-        
+
         /**
          * This callback happens when user is subscribed to Application Notification
          * and checked out from beacon under that Zone
          * @param beaconInfo - Beacon is checked out from
          * @param zoneInfo   - Zone information Beacon belongs to
          * @param dwellTime  - time spent inside the Beacon area; in minutes
+         * @param customData - custom data associated with this Custom Action
          */
         @Override
-        public void onCheckedOutFromBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, int dwellTime) {
+        public void onCheckedOutFromBeacon(BeaconInfo beaconInfo, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
             UAirship.shared().getPushManager().editTags()
                     .removeTag("zone_" + zoneInfo.getZoneName())
                     .removeTag("beacon_" + beaconInfo.getName())
