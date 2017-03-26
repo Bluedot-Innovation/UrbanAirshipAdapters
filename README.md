@@ -3,12 +3,12 @@
 ### Overview
 > [ Urban Airship](https://www.urbanairship.com/) is an American company which provides leading brands with a market-leading mobile engagement platform and digital wallet solution. [Wikipedia](https://en.wikipedia.org/wiki/Urban_Airship)
 
-In the first draft, this documentation only represent how to archive a light touch integration for our `PointSDK` to interact with `Urban Airship` mobile engagement platform.
+In the first draft, this documentation only represent how to archive a light touch integration for our `Point SDK` to interact with `Urban Airship` mobile engagement platform.
 
 - [__iOS__](#ios)
 	- [Getting started](#getting-started-ios)
-	 - [Integrate your project with Urban Airship SDK](#integrate-urban-airship-ios)
-	  - [Integrate your project with Bluedot PointSDK](#integrate-bluedot-ios)
+	  - [Integrate your project with Urban Airship SDK](#integrate-urban-airship-ios)
+	  - [Integrate your project with Bluedot Point SDK](#integrate-bluedot-ios)
 	- [Interaction between Urban Airship SDK and Bluedot Point SDK](#interaction-urban-airship-and-bluedot-ios)
 		- [Start Urban Airship Services](#start-urban-airship-services)
 		- [Setup Bluedot Location Services](#setup-bluedot-location-services)
@@ -26,10 +26,10 @@ In the first draft, this documentation only represent how to archive a light tou
 1. Download latest version of [Urban Airship SDK](https://bintray.com/urbanairship/iOS/urbanairship-sdk/_latestVersion)
 
 2. Drag AirshipKit.xcodeproj into the top-level of your app project.
-![alt text](http://docs.urbanairship.com/_images/framework-project-dependency1.png)
+![alt text](https://docs.urbanairship.com/images/framework-project-dependency.png)
 
 3. With your project selected, select the General tab and add the AirshipKit.framework to the Embedded Binaries.
-![alt text](http://docs.urbanairship.com/_images/link-step-framework1.png)
+![alt text](https://docs.urbanairship.com/images/link-step-framework.png)
 
 4. Make sure AirshipKit.framework shows up in the Linked Frameworks and Libraries section in the General tab for your target.
 
@@ -54,23 +54,23 @@ In the first draft, this documentation only represent how to archive a light tou
 	</dict>
 	</plist>
 	```
-	![alt text](http://docs.urbanairship.com/_images/ios-background-push-info-plist1.png)
+	![alt text](https://docs.urbanairship.com/images/ios-background-push-info-plist.png)
 
 7. Enable Background Push by including the `UIBackgroundModes` key with the remote-notification value in your `Info.plist` and make it is set to `Required background modes` and `remote-notification` is set to `App downloads content in response to push notifications`.
 	>Note:
 	You need to upload your Apple Push Notification Service (APNs) Certificate in `Urban Airship` portal
 	See the [APNs Setup documentation](http://docs.urbanairship.com/reference/push-providers/apns.html) for detailed instructions on obtaining your .p12 certificate.
 
-#### Integrate your project with Bluedot PointSDK<a name="integrate-bluedot-ios"/>
-1. Download PointSDK from the `Download` section of your `Point Access Dashboard`. The SDK includes a set of header files which are in the `include` folder, a pair of static libraries: `libBDPointSDK-iphoneos.a` and `libBDPointSDK-iphonesimulator.a` and a resource bundle file `BDDataModel.bundle`.
- - A set of header files in the include folder. These header files declare the Application Programming Interface (API) between your app and Point SDK.For simplicity, you need only include BDPointSDK.h in your own source code files to include all other Point SDK headers.
- - A pair of static library files:
-    - libBDPointSDK-iphoneos.a - This static library contains arm7 and arm64 architecture slices for Point SDK. The application will be automatically linked against this library when compiling for a device, which includes when archiving for distribution through the App Store.
-    - libBDPointSDK-iphonesimulator.a - This static library contains i386 and x86_64 architecture slices for the Point SDK.  The application will be automatically linked against this library when compiling for the iOS simulator; during development.
- - A resource bundle:
-	 - BDDataModel.bundle - The resource bundle that contains data files which is required for Point SDK operation.
+#### Integrate your project with Bluedot Point SDK<a name="integrate-bluedot-ios"/>
+1. Download Point SDK from the `Download` section of your `Point Access Dashboard`. The SDK includes a set of header files which are in the `include` folder, a pair of static libraries: `libBDPointSDK-iphoneos.a` and `libBDPointSDK-iphonesimulator.a` and a resource bundle file `BDDataModel.bundle`.
+    - A set of header files in the include folder. These header files declare the Application Programming Interface (API) between your app and Point SDK.For simplicity, you need only include BDPointSDK.h in your own source code files to include all other Point SDK headers.
+    - A pair of static library files:
+      - libBDPointSDK-iphoneos.a - This static library contains arm7 and arm64 architecture slices for Point SDK. The application will be automatically linked against this library when compiling for a device, which includes when archiving for distribution through the App Store.
+      - libBDPointSDK-iphonesimulator.a - This static library contains i386 and x86_64 architecture slices for the Point SDK.  The application will be automatically linked against this library when compiling for the iOS simulator; during development.
+    - A resource bundle:
+	    - BDDataModel.bundle - The resource bundle that contains data files which is required for Point SDK operation.
 
-2. Drag all the content from PointSDK into your project and update `Header Search Path` and `Library Search Path` from your project settings. For example,
+2. Drag all the content from Point SDK into your project and update `Header Search Path` and `Library Search Path` from your project settings. For example,
 `Header Search Path` - `${PROJECT_DIR}/PointSDK/include` and
 `Library Search Path` - `${PROJECT_DIR}/PointSDK`.
 
@@ -78,57 +78,57 @@ In the first draft, this documentation only represent how to archive a light tou
 3. Set `Other Linker Flags` to `-lBDPointSDK-${PLATFORM_NAME} -ObjC` in your project settings.
 
 4. Add following Framework Dependencies into your project
-  * AudioToolbox
-  * AVFoundation
-  * CoreGraphics
-  * CoreLocation
-  * CoreMotion
-  * MapKit
-  * SystemConfiguration
-  * UIKit
+    * AudioToolbox
+    * AVFoundation
+    * CoreGraphics
+    * CoreLocation
+    * CoreMotion
+    * MapKit
+    * SystemConfiguration
+    * UIKit
 
 5. Add following values into `Required Device Capabilities` from your `Info.plist`.
-  * gps
-  * location-services
-  * accelerometer
+    * gps
+    * location-services
+    * accelerometer
 
 6. Add key `NSLocationAlwaysUsageDescription` with a usage description to your `Info.plist`.
 
 7. Add following modes in the existing entry `Required background modes` from your `Info.plist`.
-  * App registers for location updates
+    * App registers for location updates
 
 ### Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-ios"/>
 #### Start Urban Airship Services
 1. Import required header files
-	```objc
-	#import <AirshipKit/AirshipKit.h>
-	```
+    ```objc
+	  #import <AirshipKit/AirshipKit.h>
+	  ```
 
 2. Take off Urban Airship Services from `application:didFinishLaunchingWithOptions:` method in your `AppDelegate`
-	```objc
-  // Call takeOff (which creates the UAirship singleton)
-  [UAirship takeOff];
+    ```objc
+    // Call takeOff (which creates the UAirship singleton)
+    [UAirship takeOff];
 
-  // User notifications will not be enabled until userPushNotificationsEnabled is
-  // set YES on UAPush. Once enabled, the setting will be persisted and the user
-  // will be prompted to allow notifications. Normally, you should wait for a more
-  // appropriate time to enable push to increase the likelihood that the user will
-  // accept notifications.
-  [UAirship push].userPushNotificationsEnabled = YES;
-	```
+    // User notifications will not be enabled until userPushNotificationsEnabled is
+    // set YES on UAPush. Once enabled, the setting will be persisted and the user
+    // will be prompted to allow notifications. Normally, you should wait for a more
+    // appropriate time to enable push to increase the likelihood that the user will
+    // accept notifications.
+    [UAirship push].userPushNotificationsEnabled = YES;
+    ```
 
 #### Setup Bluedot Location Services
 1. Import required header files
-	```objc
-	#import <BDPointSDK.h>
-	```
+    ```objc
+	  #import <BDPointSDK.h>
+	  ```
 
 2. Introducing `BDLocationManager` which is the entry-point for an app to start using Point SDK
-	```objc
-  [BDLocationManager instance];
-	```
-	To enable rules which are defined via `Bluedot Point Access` web interface, it is necessary to call the authentication method from `BDLocationManager` with your username, API key and package name.
-	```objc
+    ```objc
+    [BDLocationManager instance];
+    ```
+    To enable rules which are defined via `Bluedot Point Access` web interface, it is necessary to call the authentication method from `BDLocationManager` with your username, API key and package name.
+    ```objc
 	  /**
 	    * <p>Authenticate, and start a session with <b>Point Access</b>.
 	    * This behavior is asynchronous and this method will return immediately. Progress of the authentication process can be
@@ -142,38 +142,38 @@ In the first draft, this documentation only represent how to archive a light tou
 	    *
 	    * @exception BDPointSessionException Calling this method while in an invalid state will result in a @ref BDPointSessionException being thrown.
 	    */
-	  [[BDLocationManager instance] authenticateWithApiKey: apiKey
-	                                           packageName: packageName
-	                                              username: username];
+	    [[BDLocationManager instance] authenticateWithApiKey: apiKey
+	                                             packageName: packageName
+	                                                username: username];
 	  /**
 	    * <p>Like authenticateWithApiKey:packageName:username: but allows the URL of <b>Point Access</b> to be overridden to a non-default value.
 	    * This should not normally be used; but may become necessary in certain support scenarios.</p>
 	    */
-	  [[BDLocationManager instance] authenticateWithApiKey: apiKey
-	                                           packageName: packageName
-	                                              username: username
-	                                           endpointURL: endpointURL];
-	```
+	    [[BDLocationManager instance] authenticateWithApiKey: apiKey
+	                                             packageName: packageName
+	                                                username: username
+	                                             endpointURL: endpointURL];
+      ```
 
 3. `BDLocationManager` expose properties for two delegates with additional features
   - `sessionDelegate` implements `BDPSessionDelegate` protocol
     - `BDPSessionDelegate` protocol provides callbacks informing the application when authentication state changes. The rules defined will only be observed while authenticated.
   - `locationDelegate` implements `BDPLocationDelegate` protocol and provide callbacks to notify your application when:
     - Zone information is received. This typically occurs immediately after the authentication process completes.
-    ```objc
-    didUpdateZoneInfo:
-    ```
+      ```objc
+      didUpdateZoneInfo:
+      ```
     - Any `Custom Action` defined is triggered. Either of the following callbacks will be invoked, depending on whether the trigger is a geofence or beacon.
-    ```objc
-    didCheckIntoFence:inZone:atLocation:willCheckOut:withCustomData:
-    didCheckIntoBeacon:inZone:atLocation:withProximity:willCheckOut:withCustomData:
-    ```
+      ```objc
+      didCheckIntoFence:inZone:atLocation:willCheckOut:withCustomData:
+      didCheckIntoBeacon:inZone:atLocation:withProximity:willCheckOut:withCustomData:
+      ```
     - Leave the checked-in area. If `willCheckOut` flag was set, either of the following corresponding callbacks will be made:
-    ```objc
-    didCheckOutFromFence:inZone:onDate:withDuration:withCustomData:
-    didCheckOutFromBeacon:inZone:withProximity:onDate:withDuration:withCustomData:
-    ```
-    >Note: `Checkout` doesn't apply to geolines.
+      ```objc
+      didCheckOutFromFence:inZone:onDate:withDuration:withCustomData:
+      didCheckOutFromBeacon:inZone:withProximity:onDate:withDuration:withCustomData:
+      ```
+      >Note: `Checkout` doesn't apply to geolines.
 
 #### Use case
 **Objective**: Trigger an `automated message` pushed to end user when the device checks in a `geofence` or `geoline`.
@@ -233,7 +233,7 @@ We define a header file called _UABluedotLocationServiceAdapter.h_:
 + (instancetype)shared;
 
 /**
-  * Authenticate the application to Bluedot PointSDK
+  * Authenticate the application to Bluedot Point SDK
   * apiKey, username and packageName are provided in Info.plist with following keys
   * apiKey      - bluedotApiKey
   * username    - bluedotUsername
@@ -241,7 +241,7 @@ We define a header file called _UABluedotLocationServiceAdapter.h_:
   */
 - (void)authenticate;
 
-// End current session and logout with Bluedot PointSDK
+// End current session and logout with Bluedot Point SDK
 - (void) logout;
 
 @end
@@ -338,22 +338,22 @@ And here is an example how we use the header to implement:
 
 3. Add the `airshipconfig.properties` to your application’s *src/main/assets* directory. (Note: You may have to create the src/main/assets directory.)
 
-  Download `airshipconfig.properties` pre-populated with your Urban Airship app key and secret or add it manually.
-  ```
-  developmentAppKey = Your Development App Key
-  developmentAppSecret = Your Development Secret
+    Download `airshipconfig.properties` pre-populated with your Urban Airship app key and secret or add it manually.
+    ```
+    developmentAppKey = Your Development App Key
+    developmentAppSecret = Your Development Secret
 
-  productionAppKey = Your Production App Key
-  productionAppSecret = Your Production Secret
+    productionAppKey = Your Production App Key
+    productionAppSecret = Your Production Secret
 
-  #Toggles between the development and production app credentials
-  #Before submitting your application to an app store set to true
-  inProduction = false
+    #Toggles between the development and production app credentials
+    #Before submitting your application to an app store set to true
+    inProduction = false
 
-  #LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
-  developmentLogLevel = DEBUG
-  productionLogLevel = ERROR
-  ```
+    #LogLevel is "VERBOSE", "DEBUG", "INFO", "WARN", "ERROR" or "ASSERT"
+    developmentLogLevel = DEBUG
+    productionLogLevel = ERROR
+    ```
 4. Start Urban Airship services by invoking `takeOff` at the entry point in application. In order to do so, you need to have a class that extends [Application](http://developer.android.com/reference/android/app/Application.html) class and set the name of that class for the application entry in `AndroidManifest.xml`.
 
 	 ```
@@ -390,37 +390,35 @@ And here is an example how we use the header to implement:
 1. Download the Android Point SDK in the Download section of the [Dashboard](https://www.pointaccess.bluedot.com.au/pointaccess-v1/dashboard.html).
 
 2. Unzip the downloaded file and copy the JAR file to app's libs folder. The libs folder is visible by changing the Project Explorer mode to Project from Android.
-  ![From Android to Project structure mode](http://i.stack.imgur.com/zFsHB.png).
 
-  ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/7700623/image2016-11-22%2015%3A11%3A20.png?version=1&modificationDate=1488205953000&api=v2)
+    ![From Android to Project structure mode](http://i.stack.imgur.com/zFsHB.png).
 
-  Update `build.gradle` script to compile the dependency
+    ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/7700623/image2016-11-22%2015%3A11%3A20.png?version=1&modificationDate=1488205953000&api=v2)
 
-  ```
-    dependencies {
-	   ...
-     compile fileTree(include:'*.jar',dir: 'libs')
- }
-  ```
-
-3. Add required permissions in `AndroidManifest.xml` file
-
-  ```
-  <!-- General Point SDK functionality -->
-  <uses-permission android:name="android.permission.INTERNET" />
-  <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-  <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-  <uses-permission android:name="android.permission.VIBRATE" />
-
-  <!-- Required for Beacons integration -->
-  <uses-permission android:name="android.permission.BLUETOOTH" />
-  <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    Update `build.gradle` script to compile the dependency
+    ```
+      dependencies {
+	    ...
+      compile fileTree(include:'*.jar',dir: 'libs')
+    }
     ```
 
-    In addition to the above permissions, following services must be declared
+3. Add required permissions in `AndroidManifest.xml` file
+    ```
+    <!-- General Point SDK functionality -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
+    <!-- Required for Beacons integration -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+      ```
+
+    In addition to the above permissions, following services must be declared
     ```
     <!-- General Point SDK functionality -->
      <service
@@ -445,37 +443,37 @@ And here is an example how we use the header to implement:
 ## Interaction between Urban Airship SDK and Bluedot Point SDK<a name="interaction-urban-airship-and-bluedot-android">
 
 1. Start Urban Airship services by overriding `onCreate` in your custom Application class
-	```java
-	@Override
-	public void onCreate() {
-    	super.onCreate();
+	  ```java
+	  @Override
+	  public void onCreate() {
+      	super.onCreate();
 
-    	UAirship.takeOff(this, new UAirship.OnReadyCallback() {
-      		@Override
-        	public void onAirshipReady(UAirship airship) {
+    	  UAirship.takeOff(this, new UAirship.OnReadyCallback() {
+      	  	@Override
+        	  public void onAirshipReady(UAirship airship) {
 
-            	// Enable user notifications
-            	airship.getPushManager().setUserNotificationsEnabled(true);
-        	}
-    	});
-	}
-	```
+            	  // Enable user notifications
+            	  airship.getPushManager().setUserNotificationsEnabled(true);
+        	  }
+    	  });
+	  }
+	  ```
 
 2. Add `BluedotAdapter.java` to your project package.
 
 3. Starting Point SDK services using Adapter.
-  ```java
-  // Bluedot User name, API key and Package name
-  private final String USER_NAME = Email Address used for registration;
-  private final String API_KEY = Bluedot API key assigned to your application;
-  private final String PACKAGE_NAME = Bluedot package name assigned to your application;
+    ```java
+    // Bluedot User name, API key and Package name
+    private final String USER_NAME = Email Address used for registration;
+    private final String API_KEY = Bluedot API key assigned to your application;
+    private final String PACKAGE_NAME = Bluedot package name assigned to your application;
 
-  //Get instance of the Adapter;
-  bluedotAdapter = BluedotAdapter.getInstance(this);
+    //Get instance of the Adapter;
+    bluedotAdapter = BluedotAdapter.getInstance(this);
 
-  // Provide details required for authentication
-  bluedotAdapter.startSDK(PACKAGE_NAME, API_KEY, USER_NAME, true);
-  ```
+    // Provide details required for authentication
+    bluedotAdapter.startSDK(PACKAGE_NAME, API_KEY, USER_NAME, true);
+    ```
 
 4. Bluedot SDK provides event listeners
 	* `ServiceStatusListener` is listener that lets user's Bluedot application know when service status changes.
@@ -563,9 +561,9 @@ And here is an example how we use the header to implement:
         * `Checkout` does not apply to geolines.
 
 5. To stop the service
-  ```java
-  bluedotAdapter.stopSDK();
-  ```
+    ```java
+    bluedotAdapter.stopSDK();
+    ```
 
 #### Bluedot Adapter Use Case
 
