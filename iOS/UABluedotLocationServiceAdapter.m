@@ -107,7 +107,7 @@
     
     [[UAirship push] updateRegistration];
     
-    if ( willCheckOut == NO )
+    if ( willCheckOut == NO || [ fence.geometry isKindOfClass:BDLineString.class ] )
     {
         [NSTimer scheduledTimerWithTimeInterval:TAG_EXPIRY target:self selector:@selector(resetTags:) userInfo:tags repeats:NO];
     }
