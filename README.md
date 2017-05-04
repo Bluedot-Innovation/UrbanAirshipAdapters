@@ -1,5 +1,4 @@
-## Urban Airship SDK Integration Guide
-------
+# Urban Airship Adapter for Bluedot Point SDK
 ### Overview
 > [ Urban Airship](https://www.urbanairship.com/) is an American company which provides leading brands with a market-leading mobile engagement platform and digital wallet solution. [Wikipedia](https://en.wikipedia.org/wiki/Urban_Airship)
 
@@ -74,7 +73,7 @@ In the first draft, this documentation only represent how to archive a light tou
 `Header Search Path` - `${PROJECT_DIR}/PointSDK/include` and
 `Library Search Path` - `${PROJECT_DIR}/PointSDK`.
 
-	![alt text](http://docs.bluedotinnovation.com/download/attachments/8028302/004-HeaderSeachPath.png?version=1&modificationDate=1489500141000&api=v2)
+	![alt text](https://bluedotinnovation.com/wp-content/uploads/ua-integration/004-HeaderSeachPath.png)
 3. Set `Other Linker Flags` to `-lBDPointSDK-${PLATFORM_NAME} -ObjC` in your project settings.
 
 4. Add following Framework Dependencies into your project
@@ -391,9 +390,9 @@ And here is an example how we use the header to implement:
 
 2. Unzip the downloaded file and copy the JAR file to app's libs folder. The libs folder is visible by changing the Project Explorer mode to Project from Android.
 
-    ![From Android to Project structure mode](http://i.stack.imgur.com/zFsHB.png).
+    ![From Android to Project structure mode](https://bluedotinnovation.com/wp-content/uploads/ua-integration/zFsHB.png).
 
-    ![Adding JAR to libs](http://docs.bluedotinnovation.com/download/attachments/8028339/image2016-11-22%2015%3A11%3A20.png?version=1&modificationDate=1489500139000&api=v2)
+    ![Adding JAR to libs](https://bluedotinnovation.com/wp-content/uploads/ua-integration/adding-jar-to-libs.png)
 
     Update `build.gradle` script to compile the dependency
     ```
