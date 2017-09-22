@@ -12,12 +12,12 @@ import java.util.Map;
 import java.util.Set;
 
 import au.com.bluedot.application.model.Proximity;
-import au.com.bluedot.application.model.geo.Fence;
 import au.com.bluedot.model.geo.LineString;
 import au.com.bluedot.point.ApplicationNotificationListener;
 import au.com.bluedot.point.ServiceStatusListener;
 import au.com.bluedot.point.net.engine.BDError;
 import au.com.bluedot.point.net.engine.BeaconInfo;
+import au.com.bluedot.point.net.engine.FenceInfo;
 import au.com.bluedot.point.net.engine.LocationInfo;
 import au.com.bluedot.point.net.engine.ServiceManager;
 import au.com.bluedot.point.net.engine.ZoneInfo;
@@ -94,26 +94,26 @@ public class BluedotAdapter {
         /**
          * This callback happens when user is subscribed to Application Notification
          * and check into any fence under that Zone
-         * @param fence      - Fence triggered
+         * @param fenceInfo  - Fence triggered
          * @param zoneInfo   - Zone information Fence belongs to
          * @param location   - geographical coordinate where trigger happened
          * @param customData - custom data associated with this Custom Action
          * @param isCheckOut - CheckOut will be tracked and delivered once device left the Fence
          */
         @Override
-        public void onCheckIntoFence(final Fence fence, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
+        public void onCheckIntoFence(final FenceInfo fenceInfo, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
-                    .addTag("fence_" + fence.getName())
+                    .addTag("fence_" + fenceInfo.getName())
                     .apply();
 
-            if(fence.getGeometry() instanceof LineString || isCheckOut==false) {
+            if(fenceInfo.getGeometry() instanceof LineString || isCheckOut==false) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         UAirship.shared().getPushManager().editTags()
                                 .removeTag("zone_" + zoneInfo.getZoneName())
-                                .removeTag("fence_" + fence.getName())
+                                .removeTag("fence_" + fenceInfo.getName())
                                 .apply();
                     }
                 },TAG_EXPIRY_ms);
@@ -125,16 +125,15 @@ public class BluedotAdapter {
         /**
          * This callback happens when user is subscribed to Application Notification
          * and checked out from fence under that Zone
-         * @param fence     - Fence user is checked out from
+         * @param fenceInfo     - Fence user is checked out from
          * @param zoneInfo  - Zone information Fence belongs to
          * @param dwellTime - time spent inside the Fence; in minutes
-         * @param customData - custom data associated with this Custom Action
          */
         @Override
-        public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
+        public void onCheckedOutFromFence(FenceInfo fenceInfo, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
             UAirship.shared().getPushManager().editTags()
                     .removeTag("zone_" + zoneInfo.getZoneName())
-                    .removeTag("fence_" + fence.getName())
+                    .removeTag("fence_" + fenceInfo.getName())
                     .apply();
         }
 
@@ -220,8 +219,15 @@ public class BluedotAdapter {
 
         if (mContext != null) {
             serviceManager = ServiceManager.getInstance(mContext);
-            if (!serviceManager.isBlueDotPointServiceRunning()) {
 
+            //Foreground Service notification for Android O
+            Intent actionIntent = new Intent(mContext, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            serviceManager.setForegroundServiceNotification(R.mipmap.ic_launcher,
+                    mContext.getString(R.string.foreground_notification_title),
+                    mContext.getString(R.string.foreground_notification_text), pendingIntent, false); //target Android O only
+
+            if (!serviceManager.isBlueDotPointServiceRunning()) {
                 serviceManager.sendAuthenticationRequest(packageName, apiKey, userName, serviceStatusListener, restartMode, url);
 
             }
@@ -240,8 +246,15 @@ public class BluedotAdapter {
 
         if (mContext != null) {
             serviceManager = ServiceManager.getInstance(mContext);
-            if (!serviceManager.isBlueDotPointServiceRunning()) {
 
+            //Foreground Service notification for Android O
+            Intent actionIntent = new Intent(mContext, MainActivity.class);
+            PendingIntent pendingIntent = PendingIntent.getActivity(mContext, 0, actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            serviceManager.setForegroundServiceNotification(R.mipmap.ic_launcher,
+                    mContext.getString(R.string.foreground_notification_title),
+                    mContext.getString(R.string.foreground_notification_text), pendingIntent, false); //target Android O only
+
+            if (!serviceManager.isBlueDotPointServiceRunning()) {
                 serviceManager.sendAuthenticationRequest(packageName, apiKey, userName, serviceStatusListener, restartMode);
 
             }

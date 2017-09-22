@@ -515,23 +515,23 @@ And here is an example how we use the header to implement:
       /**
         * This callback happens when user is subscribed to Custom Action
         * and check into any fence under that Zone
-        * @param fence      - Fence triggered
+        * @param fenceInfo      - Fence triggered
         * @param zoneInfo   - Zone information Fence belongs to
         * @param location   - geographical coordinate where trigger happened
 	      * @param customData - custom data associated with this Custom Action
         * @param isCheckOut - CheckOut will be tracked and delivered once device left the Fence
         */
-      public void onCheckIntoFence(Fence fence, ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut);
+      public void onCheckIntoFence(FenceInfo fenceInfo, ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut);
 
       /**
         * This callback happens when user is subscribed to Custom Action
         * and checked out from fence under that Zone which has CheckOut enabled
-        * @param fence      - Fence user is checked out from
+        * @param fenceInfo      - Fence user is checked out from
         * @param zoneInfo   - Zone information Fence belongs to
         * @param dwellTime  - time spent inside the Fence; in minutes
 	      * @param customData - custom data associated with this Custom Action
         */
-      public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData);
+      public void onCheckedOutFromFence(FenceInfo fenceInfo, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData);
 
       /**
         * This callback happens when user is subscribed to Custom Action
@@ -580,19 +580,19 @@ private final long TAG_EXPIRY_ms = 7000;
 
 private ApplicationNotificationListener applicationNotificationListener = new ApplicationNotificationListener() {
         @Override
-        public void onCheckIntoFence(final Fence fence, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
+        public void onCheckIntoFence(final FenceInfo fenceInfo, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
-                    .addTag("fence_" + fence.getName())
+                    .addTag("fence_" + fenceInfo.getName())
                     .apply();
 
-            if(fence.getGeometry() instanceof LineString  || isCheckOut==false) {
+            if(fenceInfo.getGeometry() instanceof LineString  || isCheckOut==false) {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         UAirship.shared().getPushManager().editTags()
                                 .addTag("zone_" + zoneInfo.getZoneName())
-                                .addTag("fence_" + fence.getName())
+                                .addTag("fence_" + fenceInfo.getName())
                                 .apply();
                     }
                 },TAG_EXPIRY_ms);
@@ -600,10 +600,10 @@ private ApplicationNotificationListener applicationNotificationListener = new Ap
         }
 
         @Override
-        public void onCheckedOutFromFence(Fence fence, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
+        public void onCheckedOutFromFence(FenceInfo fenceInfo, ZoneInfo zoneInfo, int dwellTime, Map<String, String> customData) {
             UAirship.shared().getPushManager().editTags()
                     .removeTag("zone_" + zoneInfo.getZoneName())
-                    .removeTag("fence_" + fence.getName())
+                    .removeTag("fence_" + fenceInfo.getName())
                     .apply();
         }
 
