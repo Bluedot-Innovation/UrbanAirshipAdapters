@@ -1,15 +1,15 @@
 package au.com.bluedot.urbanairshipdemoapp;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 
 import com.urbanairship.UAirship;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import au.com.bluedot.application.model.Proximity;
 import au.com.bluedot.model.geo.LineString;
@@ -96,12 +96,12 @@ public class BluedotAdapter {
          * and check into any fence under that Zone
          * @param fenceInfo  - Fence triggered
          * @param zoneInfo   - Zone information Fence belongs to
-         * @param location   - geographical coordinate where trigger happened
+         * @param locationInfo   - geographical coordinate where trigger happened
          * @param customData - custom data associated with this Custom Action
          * @param isCheckOut - CheckOut will be tracked and delivered once device left the Fence
          */
         @Override
-        public void onCheckIntoFence(final FenceInfo fenceInfo, final ZoneInfo zoneInfo, LocationInfo location, Map<String, String> customData, boolean isCheckOut) {
+        public void onCheckIntoFence(final FenceInfo fenceInfo, final ZoneInfo zoneInfo, LocationInfo locationInfo, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
                     .addTag("fence_" + fenceInfo.getName())
@@ -142,13 +142,13 @@ public class BluedotAdapter {
          * and check into any beacon under that Zone
          * @param beaconInfo - Beacon triggered
          * @param zoneInfo   - Zone information Beacon belongs to
-         * @param location   - geographical coordinate of triggered beacon's location
+         * @param locationInfo   - geographical coordinate where trigger happened
          * @param proximity  - the proximity at which the trigger occurred
          * @param customData - custom data associated with this Custom Action
          * @param isCheckOut - CheckOut will be tracked and delivered once device left the Beacon advertisement range
          */
         @Override
-        public void onCheckIntoBeacon(final BeaconInfo beaconInfo, final ZoneInfo zoneInfo, LocationInfo location, Proximity proximity, Map<String, String> customData, boolean isCheckOut) {
+        public void onCheckIntoBeacon(final BeaconInfo beaconInfo, final ZoneInfo zoneInfo, LocationInfo locationInfo, Proximity proximity, Map<String, String> customData, boolean isCheckOut) {
             UAirship.shared().getPushManager().editTags()
                     .addTag("zone_" + zoneInfo.getZoneName())
                     .addTag("beacon_" + beaconInfo.getName())
